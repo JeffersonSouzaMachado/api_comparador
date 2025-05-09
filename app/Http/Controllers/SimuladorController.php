@@ -49,20 +49,20 @@ class SimuladorController extends Controller
 
     private function filtrarInstituicao(array $instituicoes) : self
     {
-        if (\count($instituicoes))
-        {
+        if (count($instituicoes)) {
             $arrayAux = [];
-            foreach ($instituicoes AS $key => $instituicao)
-            {
-                if (\array_key_exists($instituicao, $this->simulacao))
-                {
-                     $arrayAux[$instituicao] = $this->simulacao[$instituicao];
+            foreach ($this->simulacao as $key => $ofertas) {
+                foreach ($instituicoes as $inputInstituicao) {
+                    if (strtolower($key) === strtolower($inputInstituicao)) {
+                        $arrayAux[$key] = $ofertas;
+                    }
                 }
             }
             $this->simulacao = $arrayAux;
         }
         return $this;
     }
+    
 
     private function filtrarConvenio(array $convenios): self
 {
