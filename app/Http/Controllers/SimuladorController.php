@@ -15,8 +15,11 @@ class SimuladorController extends Controller
              ->simularEmprestimo($request->valor_emprestimo)
              ->filtrarInstituicao($request->instituicoes)
              ->filtrarConvenio($request->convenios ?? [])
-             ->filtrarParcelas($request->parcelas ?? 0);
+             ->filtrarParcelas($request->parcelas);
         ;
+
+
+        \Log::info('Resultado da simulação', $this->simulacao);
         return \response()->json($this->simulacao);
     }
 
@@ -62,20 +65,22 @@ class SimuladorController extends Controller
     }
 
     private function filtrarConvenio(array $convenios): self
-    {
-        if(count($convenios)){
-            foreach($this->simulacao as $instituicao=>$ofertas){
-                $this->simulacao[$instituicao] = array_filter($ofertas, function ($oferta) use ($convenios){
-                    return in_array($oferta['convenio'],$convenios);
-                }); 
+{
+    if (!empty($convenios)) {
+        foreach ($this->simulacao as $instituicao => $ofertas) {
+            $this->simulacao[$instituicao] = array_filter($ofertas, function ($oferta) use ($convenios) {
+                return in_array($oferta['convenio'], $convenios);
+            });
 
-                if(empty($this->simulacao[$instituicao])){
-                    unset($this->simulacao[$instituicao]);
-                }
+            if (empty($this->simulacao[$instituicao])) {
+                unset($this->simulacao[$instituicao]);
             }
         }
-        return $this;
     }
+
+    return $this;
+}
+
 
     private function filtrarParcelas(int $parcelas): self
 {
