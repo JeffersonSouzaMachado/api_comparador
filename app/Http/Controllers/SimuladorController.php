@@ -82,20 +82,23 @@ class SimuladorController extends Controller
 }
 
 
-    private function filtrarParcelas(int $parcelas): self
+private function filtrarParcelas(int $parcelas): self
 {
     if ($parcelas > 0) {
         foreach ($this->simulacao as $instituicao => $ofertas) {
-            $this->simulacao[$instituicao] = array_filter($ofertas, function ($oferta) use ($parcelas) {
+            $filtrado = array_filter($ofertas, function ($oferta) use ($parcelas) {
                 return $oferta['parcelas'] === $parcelas;
             });
 
-            if (empty($this->simulacao[$instituicao])) {
+            if (empty($filtrado)) {
                 unset($this->simulacao[$instituicao]);
+            } else {
+                $this->simulacao[$instituicao] = array_values($filtrado);
             }
         }
     }
 
     return $this;
 }
+
 }
